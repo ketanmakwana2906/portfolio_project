@@ -21,7 +21,7 @@ reliance_accid = cf_confluence["Reliance_AccId"]
 # Create Flask app
 app = Flask(__name__)
 
-@app.route("/", methods=["POST"])
+@app.route("/", methods=["GET"])
 def main():
     try:
         # Get portfolio data and send WhatsApp messages
