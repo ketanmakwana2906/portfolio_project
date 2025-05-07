@@ -1,6 +1,10 @@
 import requests
 import json
 import datetime
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 def get_portfolio_summary(userid, token, accid):
@@ -21,19 +25,18 @@ def get_portfolio_summary(userid, token, accid):
     data = json.loads(response.text)
     summary_portfolio = json.loads(data["d"][0])[0]
     str = f"""
-    Date : {datetime.datetime.today().date()}
-    Portfolio of Mr. Ketan
-    *overall portfolio summary*
+    Date : {datetime.datetime.today().date()}<br><br>
+    <b>overall portfolio summary</b> <br>
     Investment Value:
-        ₹({round(float(summary_portfolio["CostValue"]), 2)})
-    Current Market Value: 
-        ₹({round(float(summary_portfolio["Mkt_Value"]), 2)})
-    Net Profit/loss: 
-        ₹({round(float(summary_portfolio["UnRealised"]), 2)})
-    Net Profit/loss: 
-        %({round(float(summary_portfolio["AbsPer"]), 2)}%)
+        ₹({round(float(summary_portfolio["CostValue"]), 2)})<br>
+    Current Market Value:
+        ₹({round(float(summary_portfolio["Mkt_Value"]), 2)})<br>
+    Net Profit/loss:
+        ₹({round(float(summary_portfolio["UnRealised"]), 2)})<br>
+    Net Profit/loss:
+        %({round(float(summary_portfolio["AbsPer"]), 2)}%)<br><br>
 
-    details of each Equity
+    <b>details of each Equity</b><br><br>
     """
     
     return str
@@ -62,10 +65,12 @@ def get_equity_summary(userid, token, accid):
     str_list = []
     for d in portfolio:
         str += f"""
-    *{i}. {d["scripname"]}*
-    Net gain/loss: ₹({round(d["difference"], 2)}) ({round(d["difference%"], 2)}%)
-    Quantity: {d["QTY"]} share at buy price ₹({round(d["AVGCOST"], 2)}) = ₹({round(d["QTY"]*d["AVGCOST"], 2)})
-    Current market value: per share ₹({round(d["LTP"], 2)}) total ₹({round(d["MarketValue"], 2)})
+    {i}. {d["scripname"]}<br>
+    Quantity: {int(d["QTY"])}<br>
+    Original Buy Price : ₹({round(d["AVGCOST"], 2)})<br>
+    Total Investment: ₹({round(d["InvestmentValue"], 2)})<br>
+    Current market value: per share ₹({round(d["LTP"], 2)}) total ₹({round(d["MarketValue"], 2)})<br>
+    Net gain/loss: ₹({round(d["difference"], 2)}) %({round(d["difference%"], 2)}%)<br><br>
     """
         i += 1
 
@@ -105,3 +110,36 @@ def send_whatsapp_msg(str, str_remain, d360_api_key, to):
             "POST", url, headers=headers, data=payload, verify=False)
 
     return response.text
+
+
+def send_mail(str, str_remain, to):
+    smtp_server = "smtp.gmail.com"
+    port = 465  # For SSL
+    sender_email = "authoritytendermanagement@gmail.com"
+    password = "jnue bwjv vseu ntyk"  # Use the generated app password
+    receiver_email = "ketanmakwana9191@gmail.com"
+    cc_email = "ketanmakwana2906@gmail.com"
+    for i in str_remain:
+        str += i
+    subject = f"Portfolio Summary for Ketan (K462906) [{datetime.datetime.today().date()}]"
+    body = f"""\
+    {str}"""
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Cc"] = cc_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "html"))
+    
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+
+    try:
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+        print("Email sent successfully!")
+    except Exception as e:
+        print("Exception:", e)
