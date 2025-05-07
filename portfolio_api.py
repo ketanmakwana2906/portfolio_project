@@ -117,7 +117,7 @@ def send_mail(str, str_remain, to):
     port = 465  # For SSL
     sender_email = "authoritytendermanagement@gmail.com"
     password = "jnue bwjv vseu ntyk"  # Use the generated app password
-    receiver_email = "tjmakwana696@gmail.com"
+    receiver_email = "tjmakwana69@gmail.com"
     cc_email = "ketanmakwana2906@gmail.com"
     for i in str_remain:
         str += i
