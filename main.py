@@ -29,7 +29,7 @@ def main():
         str_list = get_equity_summary(reliance_userid, reliance_token, reliance_accid)
         str += str_list[0]
         str_remain = str_list[1:]
-        send_whatsapp_msg(str, str_remain, d360_api_key, to_number_d360)
+        # send_whatsapp_msg(str, str_remain, d360_api_key, to_number_d360)
         send_mail(str, str_remain, "ketanmakwana9191@gmail.com")
         return "Portfolio sent!!", 200
     except Exception as e:
