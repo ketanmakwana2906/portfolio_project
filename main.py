@@ -3,7 +3,6 @@ from portfolio_api import *
 import os
 import urllib3
 import json
-import schedule
 
 # Disable warnings for insecure requests
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
