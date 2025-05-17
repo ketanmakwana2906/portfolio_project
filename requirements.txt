@@ -1,3 +1,7 @@
 requests
 urllib3
 flask
+smtplib
+ssl
+email
+bs4
