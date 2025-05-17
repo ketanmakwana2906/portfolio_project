@@ -69,7 +69,7 @@ def get_equity_summary(userid, token, accid):
     Quantity: {int(d["QTY"])}<br>
     Original Buy Price : ₹({round(d["AVGCOST"], 2)})<br>
     Total Investment: ₹({round(d["InvestmentValue"], 2)})<br>
-    Current market value: per share ₹({round(d["LTP"], 2)}) total ₹({round(d["MarketValue"], 2)})<br>
+    Current market value: per share ₹({round(float(d["LTP"]), 2)}) total ₹({round(d["MarketValue"], 2)})<br>
     Net gain/loss: ₹({round(d["difference"], 2)}) %({round(d["difference%"], 2)}%)<br><br>
     """
         i += 1
