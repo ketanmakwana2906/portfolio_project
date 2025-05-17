@@ -11,26 +11,30 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # with open("portfolio_env.json") as f:
 #     creds_json = f.read()
 #     os.environ["PORTFOLIO_PARAM"] = creds_json
-cf_confluence = json.loads(os.environ.get("PORTFOLIO_PARAM"))
-d360_api_key = cf_confluence["D360_API_KEY"]
-to_number_d360 = cf_confluence["TO_NUMBER_D360"]
-reliance_userid = cf_confluence["Reliance_UserID"]
-reliance_token = cf_confluence["Reliance_Token"]
-reliance_accid = cf_confluence["Reliance_AccId"]
+# cf_confluence = json.loads(os.environ.get("PORTFOLIO_PARAM"))
+# d360_api_key = cf_confluence["D360_API_KEY"]
+# to_number_d360 = cf_confluence["TO_NUMBER_D360"]
+# reliance_userid = cf_confluence["Reliance_UserID"]
+# reliance_token = cf_confluence["Reliance_Token"]
+# reliance_accid = cf_confluence["Reliance_AccId"]
 
 # Create Flask app
 app = Flask(__name__)
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["POST"])
 def main():
     try:
-        # Get portfolio data and send WhatsApp messages
-        str = get_portfolio_summary(reliance_userid, reliance_token, reliance_accid)
-        str_list = get_equity_summary(reliance_userid, reliance_token, reliance_accid)
-        str += str_list[0]
-        str_remain = str_list[1:]
+        data = request.json
+        to_mails = data.get("to_mails", [])
+        cc_mails = data.get("cc_mails", [])
+        if not to_mails:
+            return "E-mail id required for API", 401
+        print("hello")
+        str_mail = get_html_for_mail()
+        print("hello 1")
+        send_mail(str_mail, to_mails, cc_mails)
+        # str_wa = get_str_for_wa_msg()
         # send_whatsapp_msg(str, str_remain, d360_api_key, to_number_d360)
-        send_mail(str, str_remain, "ketanmakwana9191@gmail.com")
         return "Portfolio sent!!", 200
     except Exception as e:
         print(e)
