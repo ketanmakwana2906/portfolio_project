@@ -29,10 +29,13 @@ def main():
         cc_mails = data.get("cc_mails", [])
         if not to_mails:
             return "E-mail id required for API", 401
+        if is_email_sent_today():
+            return "Email already sent today!", 200
         print("hello")
         str_mail = get_html_for_mail()
         print("hello 1")
         send_mail(str_mail, to_mails, cc_mails)
+        update_email_log()
         # str_wa = get_str_for_wa_msg()
         # send_whatsapp_msg(str, str_remain, d360_api_key, to_number_d360)
         return "Portfolio sent!!", 200
