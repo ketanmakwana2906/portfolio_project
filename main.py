@@ -27,9 +27,10 @@ def main():
         data = request.json
         to_mails = data.get("to_mails", [])
         cc_mails = data.get("cc_mails", [])
+        per_day_flag = data.get("per_day_flag",False)
         if not to_mails:
             return "E-mail id required for API", 401
-        if is_email_sent_today():
+        if is_email_sent_today() and per_day_flag:
             return "Email already sent today!", 200
         print("hello")
         str_mail = get_html_for_mail()
